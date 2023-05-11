@@ -29,19 +29,22 @@ regions = soup.find_all("a")
 
 regions_sites = {}
 
-for region in regions:
-    region_name = region.get("name")
-    region_link = region.get("href")
-    region_site_name = region.text
-    if type(region_name) == str:
-        print(region_name,"\n")
-        good_name = region_name
-    else:
-        print(f"Название сайта - {region_site_name} || Ссылка - {region_link} \n")
 
-    regions_sites[good_name] = {
-        region_site_name: region_link
-    }
+
+# for region in regions:
+#     region_name = region.get("name")
+#     region_link = region.get("href")
+#     region_site_name = region.text
+#     if type(region_name) == str:
+#         print(region_name,"\n")
+#         good_name = region_name
+    # else:
+    #     print(f"Название сайта - {region_site_name} || Ссылка - {region_link} \n")
     
+
+    # regions_sites[good_name] = {
+    #     region_site_name: region_link
+    # }
+
 # with open("testing.json", "w", encoding="utf-8") as file:
 #     json.dump(regions_sites, file, indent = 4, ensure_ascii = False)

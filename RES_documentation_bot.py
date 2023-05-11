@@ -6,6 +6,7 @@ import json
 import requests
 import time
 
+
 bot = Bot(token = token_bot)
 dp = Dispatcher(bot)
 
@@ -16,7 +17,7 @@ d = json.loads(data)
 
 @dp.message_handler(commands = "start")
 async def start_command(message: types.Message):
-    start_command = ["Все приказы", "Все постановления", "Остальные документы", "Проверить наличие новых документов"]
+    start_command = ["Все приказы", "Все постановления", "Остальные документы", "Поиск по региону" "Проверить наличие новых документов"]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard = True)
     keyboard.add(*start_command)
     await message.answer("Добрый день, я выпускной проект Андрея Бондаренко!", reply_markup = keyboard)
@@ -36,6 +37,21 @@ async def show_prikaz(message: types.Message):
             time.sleep(0.5) 
             await message.answer(prikaz)
 
+@dp.message_handler(Text(equals = "Все постановления"))
+async def show_postanovlenie(message: types.Message):
+    count = 1
+    for items in d["Documents"]:
+        if items["DocumentTypeName"] == "Постановление":
+            prikaz = f"{count}. {items['SignatoryAuthorityName']}\n\n"\
+            f"{items['Name']}\n\n"\
+            f"Ссылка для просмотра: http://publication.pravo.gov.ru/Document/View/{items['EoNumber']}\n"\
+            f"Ссылка на скачивание pdf: http://publication.pravo.gov.ru/File/GetFile/{items['EoNumber']}?type=pdf\n"\
+            f"Первая страница в jpg: http://publication.pravo.gov.ru/File/GetImage?DocumentId={items['Id']}&pngIndex=1\n"
+            count += 1
+            print(prikaz)
+            time.sleep(0.2) 
+            await message.answer(prikaz)
+
 @dp.message_handler(Text(equals = "Остальные документы"))
 async def show_rasporyazhenie(message: types.Message):
     count = 1
@@ -51,20 +67,21 @@ async def show_rasporyazhenie(message: types.Message):
             print(doc)
             await message.answer(doc)
 
-@dp.message_handler(Text(equals = "Все постановления"))
-async def show_postanovlenie(message: types.Message):
-    count = 1
-    for items in d["Documents"]:
-        if items["DocumentTypeName"] == "Постановление":
-            prikaz = f"{count}. {items['SignatoryAuthorityName']}\n\n"\
-            f"{items['Name']}\n\n"\
-            f"Ссылка для просмотра: http://publication.pravo.gov.ru/Document/View/{items['EoNumber']}\n"\
-            f"Ссылка на скачивание pdf: http://publication.pravo.gov.ru/File/GetFile/{items['EoNumber']}?type=pdf\n"\
-            f"Первая страница в jpg: http://publication.pravo.gov.ru/File/GetImage?DocumentId={items['Id']}&pngIndex=1\n"
-            count += 1
-            print(prikaz)
-            time.sleep(0.2) 
-            await message.answer(prikaz)
+# @dp.message_handler(Text(equals = "Поиск по региону"))
+# async def show_postanovlenie(message: types.Message, region):
+#     count = 1
+#     await message.answer("Пожалуйста, введите название региона")
+#     for items in d["Documents"]:
+#         if items["DocumentTypeName"] == "Постановление":
+#             prikaz = f"{count}. {items['SignatoryAuthorityName']}\n\n"\
+#             f"{items['Name']}\n\n"\
+#             f"Ссылка для просмотра: http://publication.pravo.gov.ru/Document/View/{items['EoNumber']}\n"\
+#             f"Ссылка на скачивание pdf: http://publication.pravo.gov.ru/File/GetFile/{items['EoNumber']}?type=pdf\n"\
+#             f"Первая страница в jpg: http://publication.pravo.gov.ru/File/GetImage?DocumentId={items['Id']}&pngIndex=1\n"
+#             count += 1
+#             print(prikaz)
+#             time.sleep(0.2) 
+#             await message.answer(prikaz)
 
 @dp.message_handler(Text(equals = "Проверить наличие новых документов"))
 async def show_rasporyazhenie(message: types.Message):
@@ -104,6 +121,15 @@ async def show_rasporyazhenie(message: types.Message):
     else:
                     str = "Найдены новые документы!"
     await message.answer(str)
+
+@dp.message_handler(Text(equals = "Список регионов"))
+async def show_pregionlist(message: types.Message):
+    with open("regions.txt", "r", encoding="utf-8") as file:
+        data = file.read()
+    data = data.split("\n")
+    data.sort()
+    await message.answer(data)
+    # await message.answer(count)
 
 @dp.message_handler(Text)
 async def message_answer(message: types.Message):
