@@ -2,6 +2,7 @@ import datetime
 from config import token_bot
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters import Text
+from aiogram.utils.markdown import hlink
 import json
 import requests
 import time
@@ -17,55 +18,82 @@ d = json.loads(data)
 
 @dp.message_handler(commands = "start")
 async def start_command(message: types.Message):
-    start_command = ["Все приказы", "Все постановления", "Остальные документы", "Поиск по региону" "Проверить наличие новых документов"]
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard = True)
+
+    start_command = ["Все приказы", "Все постановления", "Остальные документы", "Поиск по региону", "Список регионов", "Проверить наличие новых документов"]
+    keyboard = types.ReplyKeyboardMarkup(
+         resize_keyboard = True, 
+         input_field_placeholder = "Выберите нужную функцию"
+         )
     keyboard.add(*start_command)
-    await message.answer("Добрый день, я выпускной проект Андрея Бондаренко!", reply_markup = keyboard)
+    await message.reply("Добрый день, я выпускной проект Андрея Бондаренко!", reply_markup = keyboard)
 
 @dp.message_handler(Text(equals = "Все приказы"))
 async def show_prikaz(message: types.Message):
     count = 1
     for items in d["Documents"]:
         if items["DocumentTypeName"] == "Приказ":
-            prikaz = f"{count}. {items['SignatoryAuthorityName']}\n\n"\
-            f"{items['Name']}\n\n"\
-            f"Ссылка для просмотра: http://publication.pravo.gov.ru/Document/View/{items['EoNumber']}\n"\
-            f"Ссылка на скачивание pdf: http://publication.pravo.gov.ru/File/GetFile/{items['EoNumber']}?type=pdf\n"\
-            f"Первая страница в jpg: http://publication.pravo.gov.ru/File/GetImage?DocumentId={items['Id']}&pngIndex=1\n"
+
+            link1 = f"http://publication.pravo.gov.ru/Document/View/{items['EoNumber']}"
+            linked = hlink(items['DocumentTypeName'], link1)
+
+            link2 = f"http://publication.pravo.gov.ru/File/GetFile/{items['EoNumber']}?type=pdf"
+            link3 = f"http://publication.pravo.gov.ru/File/GetImage?DocumentId={items['Id']}&pngIndex=1"
+
+            
+            prikaz = f"{count}. {linked} от {items['DocumentDate']}\n\n"\
+            f"<b>{items['SignatoryAuthorityName']}.</b>\n\n"\
+            f"{items['Name']}. \n\n"\
+            f"{hlink('Ссылка для скачивания документа в pdf', link2)}\n"\
+
             count += 1
-            print(prikaz)
-            time.sleep(0.5) 
-            await message.answer(prikaz)
+            time.sleep(0.3) 
+            await message.answer(prikaz, parse_mode="HTML", disable_web_page_preview=True)
 
 @dp.message_handler(Text(equals = "Все постановления"))
 async def show_postanovlenie(message: types.Message):
     count = 1
     for items in d["Documents"]:
         if items["DocumentTypeName"] == "Постановление":
-            prikaz = f"{count}. {items['SignatoryAuthorityName']}\n\n"\
-            f"{items['Name']}\n\n"\
-            f"Ссылка для просмотра: http://publication.pravo.gov.ru/Document/View/{items['EoNumber']}\n"\
-            f"Ссылка на скачивание pdf: http://publication.pravo.gov.ru/File/GetFile/{items['EoNumber']}?type=pdf\n"\
-            f"Первая страница в jpg: http://publication.pravo.gov.ru/File/GetImage?DocumentId={items['Id']}&pngIndex=1\n"
+            
+            link1 = f"http://publication.pravo.gov.ru/Document/View/{items['EoNumber']}"
+            linked = hlink(items['DocumentTypeName'], link1)
+
+            link2 = f"http://publication.pravo.gov.ru/File/GetFile/{items['EoNumber']}?type=pdf"
+            link3 = f"http://publication.pravo.gov.ru/File/GetImage?DocumentId={items['Id']}&pngIndex=1"
+
+            
+            prikaz = f"{count}. {linked} от {items['DocumentDate']}\n\n"\
+            f"<b>{items['SignatoryAuthorityName']}.</b>\n\n"\
+            f"{items['Name']}. \n\n"\
+            f"{hlink('Ссылка для скачивания документа в pdf', link2)}\n"\
+
             count += 1
-            print(prikaz)
-            time.sleep(0.2) 
-            await message.answer(prikaz)
+            time.sleep(0.3) 
+            await message.answer(prikaz, parse_mode="HTML", disable_web_page_preview=True)
+
+
 
 @dp.message_handler(Text(equals = "Остальные документы"))
 async def show_rasporyazhenie(message: types.Message):
     count = 1
     for items in d["Documents"]:
         if items["DocumentTypeName"] != "Приказ" and items["DocumentTypeName"] != "Постановление":
-            doc = f"{items['DocumentTypeName']}\n\n"\
-            f"{count}. {items['SignatoryAuthorityName']}\n\n"\
-            f"{items['Name']}\n\n"\
-            f"Ссылка для просмотра: http://publication.pravo.gov.ru/Document/View/{items['EoNumber']}\n"\
-            f"Ссылка на скачивание pdf: http://publication.pravo.gov.ru/File/GetFile/{items['EoNumber']}?type=pdf\n"\
-            f"Первая страница в jpg: http://publication.pravo.gov.ru/File/GetImage?DocumentId={items['Id']}&pngIndex=1\n"
+            
+            link1 = f"http://publication.pravo.gov.ru/Document/View/{items['EoNumber']}"
+            linked = hlink(items['DocumentTypeName'], link1)
+
+            link2 = f"http://publication.pravo.gov.ru/File/GetFile/{items['EoNumber']}?type=pdf"
+            link3 = f"http://publication.pravo.gov.ru/File/GetImage?DocumentId={items['Id']}&pngIndex=1"
+
+            
+            prikaz = f"{count}. {linked} от {items['DocumentDate']}\n\n"\
+            f"<b>{items['SignatoryAuthorityName']}.</b>\n\n"\
+            f"{items['Name']}. \n\n"\
+            f"{hlink('Ссылка для скачивания документа в pdf', link2)}\n"\
+
             count += 1
-            print(doc)
-            await message.answer(doc)
+            time.sleep(0.3) 
+            await message.answer(prikaz, parse_mode="HTML", disable_web_page_preview=True)
 
 # @dp.message_handler(Text(equals = "Поиск по региону"))
 # async def show_postanovlenie(message: types.Message, region):
@@ -128,8 +156,8 @@ async def show_pregionlist(message: types.Message):
         data = file.read()
     data = data.split("\n")
     data.sort()
-    await message.answer(data)
-    # await message.answer(count)
+    ultradata = '\n'.join(data)
+    await message.reply(f"<b>Список регионов по алфавиту</b>\n\n{ultradata}", parse_mode="HTML")
 
 @dp.message_handler(Text)
 async def message_answer(message: types.Message):
