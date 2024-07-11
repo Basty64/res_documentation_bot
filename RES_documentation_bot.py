@@ -4,7 +4,7 @@ from aiogram.utils.markdown import hlink
 import time
 import logging
 import asyncio
-from config import token_bot1, user_id
+from config import token_bot
 from main import d, check_today, check_date, check_region, check_prikaz, check_post, check_ost, check_president, check_gov, check_mdrf,check_fed
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
@@ -13,7 +13,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 
 
-bot = Bot(token = token_bot1)
+bot = Bot(token = token_bot)
 dp = Dispatcher(bot, storage=MemoryStorage())
 dp.middleware.setup(LoggingMiddleware())
 
