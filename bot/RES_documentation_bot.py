@@ -5,7 +5,7 @@ import time
 import logging
 import asyncio
 from config import token_bot
-from main import d, check_today, check_date, check_region, check_prikaz, check_post, check_ost, check_president, check_gov, check_mdrf,check_fed
+from bot.main import d, check_today, check_date, check_region, check_prikaz, check_post, check_ost, check_president, check_gov, check_mdrf,check_fed
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.dispatcher import FSMContext
