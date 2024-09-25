@@ -1,4 +1,4 @@
-# Telegram bot to show laws about renewable source of energy
+# Telegram bot to show laws about renewable sources of energy
 
 main readme will add later
 

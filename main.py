@@ -2,7 +2,6 @@ import json
 import requests
 from datetime import datetime
 
-
 url = "http://publication.pravo.gov.ru/api/Documents?pageSize=200&index=1&NumberSearchType=0&Name=%D0%B2%D0%BE%D0%B7%D0%BE%D0%B1%D0%BD%D0%BE%D0%B2%D0%BB%D1%8F%D0%B5%D0%BC%D1%8B%D1%85&SortedBy=0&SortDestination=1"
 
 headers = {
@@ -13,15 +12,13 @@ def check_today():
     
     date = datetime.now()
     today_date = datetime.strftime(date, "%d.%m.%Y")
-    
 
     url = f"http://publication.pravo.gov.ru/api/Documents?=200&index=1&PublishDateFrom={today_date}&NumberSearchType=0&Name=возобновляемых&SortedBy=0&SortDestination=1"
     
     r = requests.get(url=url, headers = headers)
 
     today_laws = json.loads(r.text)
-    return today_laws
-                
+    return today_laws            
 
 def check_date(date):
     

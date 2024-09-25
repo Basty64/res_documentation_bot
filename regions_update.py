@@ -1,6 +1,6 @@
 import json
 import requests
-from bs4 import BeautifulSoup as bs4
+import BeautifulSoup as bs4
 
 # url = "http://www.gov.ru/main/regions/regioni-44.html"
 

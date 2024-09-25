@@ -4,16 +4,18 @@ from aiogram.utils.markdown import hlink
 import time
 import logging
 import asyncio
-from config import token_bot
-from bot.main import d, check_today, check_date, check_region, check_prikaz, check_post, check_ost, check_president, check_gov, check_mdrf,check_fed
+from main import d, check_today, check_date, check_region, check_prikaz, check_post, check_ost, check_president, check_gov, check_mdrf,check_fed
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-
-bot = Bot(token = token_bot)
+token = os.getenv('TOKEN')
+bot = Bot(token)
 dp = Dispatcher(bot, storage=MemoryStorage())
 dp.middleware.setup(LoggingMiddleware())
 
@@ -485,36 +487,6 @@ async def process_name(message: types.Message, state: FSMContext):
             f"{hlink('Ссылка для скачивания первой страницы', link3)}"
             count += 1
             await message.answer(document, parse_mode="HTML", disable_web_page_preview=True)
-
-
-# async def laws_every_day():
-#     while True:
-#         today_laws = check_today()
-#         count = 1
-
-#         if today_laws['itemsTotalCount'] == 0:
-            
-#             await bot.send_message(user_id, "[Ежедневное оповещение]", disable_notification=True)
-#             await bot.send_message(user_id, "Сегодня новых документов не обнаружено", disable_notification=True)
-    
-#         else:
-
-#             await bot.send_message(user_id, "Обнаружены новые документы!", disable_notification=True)
-
-#             for items in today_laws["items"]:
-#                 link1 = f"http://publication.pravo.gov.ru/Document/View/{items['eoNumber']}"
-#                 linked = hlink(items['complexName'], link1)
-
-#                 link2 = f"http://publication.pravo.gov.ru/file/pdf?eoNumber={items['eoNumber']}"
-#                 link3 = f"http://publication.pravo.gov.ru/GetImage?documentId={items['id']}&pageNumber=1"
-
-#                 document = f"{count}. {linked} \n\n Опубликован {items['viewDate']}\n\n"\
-#                 f"{hlink('Ссылка для скачивания документа в pdf', link2)}\n"\
-#                 f"{hlink('Ссылка для скачивания первой страницы', link3)}"
-#                 count += 1
-#                 await bot.send_message(document, parse_mode="HTML", disable_web_page_preview=True)
-
-#         await asyncio.sleep(1)
         
 
 @dp.message_handler(Text)
